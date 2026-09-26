@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ubuntu-bg-generator</groupId>
+    <artifactId>generator</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <!-- Apache Commons codec
+            http://stackoverflow.com/questions/469695/decode-base64-data-in-java
+            -->
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.17.1</version>
+        </dependency>
+        <dependency>
+            <!-- https://github.com/anttiraisala/simple_vector_math.git -->
+            <groupId>simple-vector-math</groupId>
+            <artifactId>essentials</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <release>21</release>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven?rq=1 -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>theMainClass</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <copy file="${project.build.outputDirectory}/bars.sh"
+                                      toFile="./target/bars.sh" overwrite="true" />
+                                <chmod file="./target/bars.sh" perm="777"/>
+                                <copy file="${project.build.outputDirectory}/colorClouds.sh"
+                                      toFile="./target/colorClouds.sh" overwrite="true" />
+                                <chmod file="./target/colorClouds.sh" perm="777"/>
+                                <copy file="${project.build.outputDirectory}/masks.sh"
+                                      toFile="./target/masks.sh" overwrite="true" />
+                                <chmod file="./target/masks.sh" perm="777"/>
+                                <copy file="${project.build.outputDirectory}/create-bg.sh"
+                                      toFile="./target/create-bg.sh" overwrite="true" />
+                                <chmod file="./target/create-bg.sh" perm="777"/>
+                                <copy file="${project.build.outputDirectory}/create-16-bgs.sh"
+                                      toFile="./target/create-16-bgs.sh" overwrite="true" />
+                                <chmod file="./target/create-16-bgs.sh" perm="777"/>
+                                <copy file="${project.build.outputDirectory}/create-images-and-slideshow.sh"
+                                      toFile="./target/create-images-and-slideshow.sh" overwrite="true" />
+                                <chmod file="./target/create-images-and-slideshow.sh" perm="777"/>
+                                <copy file="${project.build.outputDirectory}/create-and-deploy-bg.sh"
+                                      toFile="./target/create-and-deploy-bg.sh" overwrite="true" />
+                                <chmod file="./target/create-and-deploy-bg.sh" perm="777"/>
+                                <copy file="${project.build.outputDirectory}/text.sh"
+                                      toFile="./target/text.sh" overwrite="true" />
+                                <chmod file="./target/text.sh" perm="777"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.sh</include>
+                </includes>
+            </resource>
+        </resources>
+
+
+    </build>
+
+</project>
